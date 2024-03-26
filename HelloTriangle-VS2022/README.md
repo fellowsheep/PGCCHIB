@@ -1,6 +1,5 @@
-# Processamento Gráfico - Ciência da Computação Híbrido - Unisinos
-
-Alguns projetos desenvolvidos para as aulas de Processamento Gráfico, do curso de Ciência da Computação Híbrido da Unisinos. O uso destes projetos é opcional. Aconselha-se estudá-los junto com os outros materiais recomendados no curso.
+# Projeto Hello Triangle - setup no Visual Studio 2022
+## Mini-Tutorial
 
 As dependências estão pré-compiladas para Windows 10 64-bits e compilador do Visual Studio 2019/2022
 Se o seu ambiente de desenvolvimento for diferente, você deve baixar:
