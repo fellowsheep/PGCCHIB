@@ -19,6 +19,16 @@ using namespace std;
 // GLFW
 #include <GLFW/glfw3.h>
 
+//GLM
+#include <glm/glm.hpp> 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+using namespace glm;
+
+#include <cmath>
+
+
 // Protótipo da função de callback de teclado
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
@@ -32,13 +42,15 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 // Código fonte do Vertex Shader (em GLSL): ainda hardcoded
 const GLchar* vertexShaderSource = "#version 400\n"
 "layout (location = 0) in vec3 position;\n"
+"uniform mat4 projection;\n"
+"uniform mat4 model;\n"
 "void main()\n"
 "{\n"
 //...pode ter mais linhas de código aqui!
-"gl_Position = vec4(position.x, position.y, position.z, 1.0);\n"
+"gl_Position = projection * model * vec4(position.x, position.y, position.z, 1.0);\n"
 "}\0";
 
-//Códifo fonte do Fragment Shader (em GLSL): ainda hardcoded
+//Código fonte do Fragment Shader (em GLSL): ainda hardcoded
 const GLchar* fragmentShaderSource = "#version 400\n"
 "uniform vec4 inputColor;\n"
 "out vec4 color;\n"
@@ -98,20 +110,44 @@ int main()
 	// Gerando um buffer simples, com a geometria de um triângulo
 	GLuint VAO = setupGeometry();
 	
+	glUseProgram(shaderID);
 
 	// Enviando a cor desejada (vec4) para o fragment shader
 	// Utilizamos a variáveis do tipo uniform em GLSL para armazenar esse tipo de info
 	// que não está nos buffers
 	GLint colorLoc = glGetUniformLocation(shaderID, "inputColor");
+
+	//Matriz de projeção paralela ortográfica
+	//mat4 projection = ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
+	mat4 projection = ortho(0.0, 800.0, 0.0, 600.0, -1.0, 1.0);  
+	glUniformMatrix4fv(glGetUniformLocation(shaderID, "projection"), 1, GL_FALSE, value_ptr(projection));
+
+	//Matriz de modelo: transformações na geometria (objeto)
+	mat4 model = mat4(1); //matriz identidade
+	//Translação
+	model = translate(model,vec3(400.0,300.0,0.0));
 	
-	glUseProgram(shaderID);
-	
+	model = rotate(model,radians(45.0f),vec3(0.0,0.0,1.0));
+	//Escala
+	model = scale(model,vec3(300.0,300.0,1.0));
+	glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
+
 
 	// Loop da aplicação - "game loop"
 	while (!glfwWindowShouldClose(window))
 	{
 		// Checa se houveram eventos de input (key pressed, mouse moved etc.) e chama as funções de callback correspondentes
 		glfwPollEvents();
+
+		//Matriz de modelo: transformações na geometria (objeto)
+		model = mat4(1); //matriz identidade
+		//Translação
+		model = translate(model,vec3(400.0,300.0,0.0));
+		model = rotate(model,(float)glfwGetTime(),vec3(0.0,0.0,1.0));
+		//Escala
+		model = scale(model,vec3(abs(cos(glfwGetTime())) * 300.0,abs(cos(glfwGetTime())) * 300.0,1.0));
+		glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
+
 
 		// Limpa o buffer de cor
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); //cor de fundo
@@ -122,11 +158,20 @@ int main()
 
 		glBindVertexArray(VAO); //Conectando ao buffer de geometria
 
-		glUniform4f(colorLoc, 0.0f, 0.0f, 1.0f, 1.0f); //enviando cor para variável uniform inputColor
-
+		glUniform4f(colorLoc, 0.0f, 0.0f, abs(cos(glfwGetTime())) , 1.0f); //enviando cor para variável uniform inputColor
 		// Chamada de desenho - drawcall
 		// Poligono Preenchido - GL_TRIANGLES
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+		
+		//Desenho com contorno (linhas)
+		//glUniform4f(colorLoc, 1.0f, 0.0f, 1.0f, 1.0f); //enviando cor para variável uniform inputColor
+		//glDrawArrays(GL_LINE_LOOP, 0, 3); //Desenha T0
+		//glDrawArrays(GL_LINE_LOOP, 3, 3); //Desenha T1
+
+		//Desenho só dos pontos (vértices)
+		//glUniform4f(colorLoc, 1.0f, 1.0f, 0.0f, 1.0f); //enviando cor para variável uniform inputColor
+		//glDrawArrays(GL_POINTS, 0, 6); 
+
 
 		glBindVertexArray(0); //Desconectando o buffer de geometria
 
@@ -209,13 +254,11 @@ int setupGeometry()
 	// Cada atributo do vértice (coordenada, cores, coordenadas de textura, normal, etc)
 	// Pode ser arazenado em um VBO único ou em VBOs separados
 	GLfloat vertices[] = {
-		//x   y     z
+		//x    y    z
 		//T0
-		-0.5, -0.5, 0.0, //v0
-		 0.5, -0.5, 0.0, //v1
- 		 0.0,  0.5, 0.0, //v2
-		//T1
-			  
+		-0.5 , -0.5 , 0.0, //v0
+		 0.5 , -0.5 , 0.0, //v1
+		 0.0 ,  0.5 , 0.0, //v2				  
 	};
 
 	GLuint VBO, VAO;
