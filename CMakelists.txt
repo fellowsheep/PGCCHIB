@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(PGCCHIB)
+project(CGCCHIB)
 
 # Define o padrão do C++
 set(CMAKE_CXX_STANDARD 17)
@@ -21,13 +21,14 @@ FetchContent_MakeAvailable(glfw)
 # Adiciona as pastas de cabeçalhos
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/include/glad)
-include_directories(${CMAKE_SOURCE_DIR}/Common)
-include_directories(${CMAKE_SOURCE_DIR}/Dependencies/glm)  # GLM adicionada!
+include_directories(${CMAKE_SOURCE_DIR}/common)
 
 # Lista de exercícios (por enquanto só tem o HelloTriangle)
-set(EXERCISES 
+set(EXERCISES
     HelloTriangle
 )
+
+add_compile_options(-Wno-pragmas)
 
 # Loop para criar um executável para cada exercício
 foreach(EXERCISE ${EXERCISES})
