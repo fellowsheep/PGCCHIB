@@ -4,8 +4,6 @@ Este repositório contém exemplos e códigos utilizados nas disciplinas de **Pr
 
 ## 📂 Estrutura do Repositório
 
-## 📂 Estrutura do Repositório
-
 ```plaintext
 📂 PGCCHIB/
 ├── 📂 include/               # Cabeçalhos e bibliotecas de terceiros
