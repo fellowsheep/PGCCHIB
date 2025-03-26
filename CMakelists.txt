@@ -36,6 +36,7 @@ include_directories(${glm_SOURCE_DIR})
 set(EXERCISES
     HelloTriangle
     HelloTransform
+    Exercicio1
 )
 
 add_compile_options(-Wno-pragmas)
