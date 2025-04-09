@@ -31,6 +31,7 @@ using namespace glm;
 
 // Protótipo da função de callback de teclado
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
 // Protótipos das funções
 GLuint createTriangle(float x0, float y0, float x1, float y1, float x2, float y2);
@@ -71,6 +72,11 @@ struct Triangle
 	vec3 color;
 };
 
+vector<Triangle> triangles;
+
+vector <vec3> colors;
+int iColor = 0;
+
 // Função MAIN
 int main()
 {
@@ -96,6 +102,7 @@ int main()
 
 	// Fazendo o registro da função de callback para a janela GLFW
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
 	// GLAD: carrega todos os ponteiros d funções da OpenGL
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -109,6 +116,27 @@ int main()
 	cout << "Renderer: " << renderer << endl;
 	cout << "OpenGL version supported " << version << endl;
 
+
+	//Inicializando paleta de cores
+	colors.push_back(vec3(200, 191, 231));
+	colors.push_back(vec3(174, 217, 224));
+	colors.push_back(vec3(181, 234, 215));
+	colors.push_back(vec3(255, 241, 182));
+	colors.push_back(vec3(255, 188, 188));
+	colors.push_back(vec3(246, 193, 199));
+	colors.push_back(vec3(255, 216, 190));
+	colors.push_back(vec3(220, 198, 224));
+	colors.push_back(vec3(208, 230, 165));
+	colors.push_back(vec3(183, 201, 226));
+
+	// Normalizar as cores entre 0 e 1
+	for (int i=0; i<colors.size(); i++)
+	{
+		colors[i].r /= 255.0;
+		colors[i].g /= 255.0;
+		colors[i].b /= 255.0;
+	}
+
 	// Definindo as dimensões da viewport com as mesmas dimensões da janela da aplicação
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
@@ -117,14 +145,14 @@ int main()
 	// Compilando e buildando o programa de shader
 	GLuint shaderID = setupShader();
 
-	vector<Triangle> triangles;
+	
 	GLuint VAO = createTriangle(-0.5,-0.5,0.5,-0.5,0.0,0.5);
-	//VAOs.push_back(createTriangle(-0.65, 0.33, -0.27, 0.53, -0.61, 0.79));
 	
 	Triangle tri;
 	tri.position = vec3(400.0,300.0,0.0);
 	tri.dimensions = vec3(100.0,100.0,1.0);
-	tri.color = vec3(1.0, 0.0, 0.0);
+	tri.color = vec3(colors[iColor].r, colors[iColor].g, colors[iColor].b);
+	iColor = (iColor + 1) % colors.size();
 	triangles.push_back(tri);
 
 
@@ -137,7 +165,7 @@ int main()
 
 	// Matriz de projeção paralela ortográfica
 	// mat4 projection = ortho(-10.0, 10.0, -10.0, 10.0, -1.0, 1.0);
-	mat4 projection = ortho(0.0, 800.0, 0.0, 600.0, -1.0, 1.0);
+	mat4 projection = ortho(0.0, 800.0, 600.0, 0.0, -1.0, 1.0);
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, "projection"), 1, GL_FALSE, value_ptr(projection));
 
 	// Loop da aplicação - "game loop"
@@ -160,9 +188,9 @@ int main()
 			// Matriz de modelo: transformações na geometria (objeto)
 			mat4 model = mat4(1); // matriz identidade
 			// Translação
-			 model = translate(model,vec3(triangles[i].position.x,triangles[i].position.y,0.0));
+			model = translate(model,vec3(triangles[i].position.x,triangles[i].position.y,0.0));
 
-			// model = rotate(model,radians(45.0f),vec3(0.0,0.0,1.0));
+			model = rotate(model,radians(180.0f),vec3(0.0,0.0,1.0));
 			// Escala
 			model = scale(model,vec3(triangles[i].dimensions.x,triangles[i].dimensions.y,1.0));
 			glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
@@ -349,4 +377,22 @@ GLuint createTriangle(float x0, float y0, float x1, float y1, float x2, float y2
 	glBindVertexArray(0);
 
 	return VAO;
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    {
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		cout << xpos << "  " << ypos << endl;
+
+		Triangle tri;
+		tri.position = vec3(xpos,ypos,0.0);
+		tri.dimensions = vec3(100.0,100.0,1.0);
+		tri.color = vec3(colors[iColor].r, colors[iColor].g, colors[iColor].b);
+		iColor = (iColor + 1) % colors.size();
+		triangles.push_back(tri);
+		
+	}
 }
