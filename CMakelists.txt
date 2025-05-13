@@ -37,12 +37,19 @@ FetchContent_MakeAvailable(stb_image)
 # Adiciona as pastas de cabeçalhos
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/common)
+include_directories(${CMAKE_SOURCE_DIR}/common/M5-6)
 include_directories(${CMAKE_SOURCE_DIR}/include/glad)
 include_directories(${glm_SOURCE_DIR})
 
 
 # Lista de exemplos/exercícios podem ser colocados aqui também
 set(EXERCISES
+    ExemplosMoodle/M1_material/exemplo_00
+    ExemplosMoodle/M1_material/exemplo_01
+    ExemplosMoodle/M2_material/exemplo_02
+    ExemplosMoodle/M3_material/exemplo_03
+    ExemplosMoodle/M4_material/exemplo_04
+    # ExemplosMoodle/M5_material/exemplo_05
     HelloTriangle
     HelloTransform
     Modulo2/Ex1Parte1M2
