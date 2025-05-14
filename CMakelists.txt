@@ -52,6 +52,7 @@ set(EXERCISES
     # ExemplosMoodle/M5_material/exemplo_05
     HelloTriangle
     HelloTransform
+    HelloTexture
     Modulo2/Ex1Parte1M2
     Modulo2/Ex1Parte2M2
     Modulo3/M3JogoCores
