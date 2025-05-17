@@ -37,6 +37,7 @@ set(EXERCISES
     HelloTriangle
     HelloTransform
     Exercicio1
+    VivencialTriangulos
 )
 
 add_compile_options(-Wno-pragmas)
