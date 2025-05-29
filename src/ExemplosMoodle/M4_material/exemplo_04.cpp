@@ -112,7 +112,7 @@ int main() {
 #pragma endregion
     
     const char* vertex_shader =
-        "#version 410\n"
+        "#version 400\n"
         "layout ( location = 0 ) in vec3 vPosition;"
         "layout ( location = 1 ) in vec3 vColor;"
         "layout ( location = 2 ) in vec2 vTexture;"
@@ -127,7 +127,7 @@ int main() {
         "}";
     
     const char* fragment_shader =
-        "#version 410\n"
+        "#version 400\n"
         "in vec2 text_map;"
         "in vec3 color;"
         "uniform sampler2D basic_texture;"
