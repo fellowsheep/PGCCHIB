@@ -81,7 +81,7 @@ int iColor = 0;
 vector<GLuint> VAOs;
 GLuint VAO;
 
-int count = 0;
+int conta = 0;
 float vetor[3][2] = {};
 // Função MAIN
 int main()
@@ -165,10 +165,10 @@ int main()
 		glLineWidth(10);
 		glPointSize(20);
 
-		if (count >= 3)
+		if (conta >= 3)
 		{
 			VAO = createTriangle(vetor[0][0], vetor[0][1], vetor[1][0], vetor[1][1], vetor[2][0], vetor[2][1]);
-			count = 0;
+			conta = 0;
 			float cor1 = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
 			float cor2 = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
 			float cor3 = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
@@ -373,8 +373,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 		// Normalizando as coordenadas
 		xpos = ((xpos / 400) - 1);
 		ypos = ((ypos / 300) - 1) * -1;
-		vetor[count][0] = xpos;
-		vetor[count][1] = ypos;
-		count++;
+		vetor[conta][0] = xpos;
+		vetor[conta][1] = ypos;
+		conta++;
 	}
 }
