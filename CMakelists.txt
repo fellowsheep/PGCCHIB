@@ -59,6 +59,7 @@ set(EXERCISES
     Modulo3/M3JogoCores
     TarefaVivencialModulo2
     TarefaVivencialModulo4
+    TarefaModulo3
 )
 
 add_compile_options(-Wno-pragmas)
