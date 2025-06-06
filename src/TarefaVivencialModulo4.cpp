@@ -5,8 +5,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <cmath>
 
 #include <iostream>
+
+using namespace std;
 
 // Largura e altura da janela
 const int WIDTH = 800;
@@ -31,11 +34,10 @@ GLuint loadTexture(const char* filepath) {
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
         
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);  
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);  
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_REPEAT);
         
         stbi_image_free(data);
     } else {
@@ -88,6 +90,7 @@ void processInput(GLFWwindow *window, glm::vec2 &texOffset) {
 }
 
 int main() {
+    glm::vec2 texOffset(0.0f, 0.0f);
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -119,16 +122,16 @@ int main() {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     
-    // Vertices com posições e coordenadas de textura
+    // Vertices com posições e coordenadas de textura de ambiente
     float vertices[] = {
         // pos          // tex
         0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-        200.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-        200.0f, 200.0f, 0.0f,  1.0f, 1.0f,
+        800.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+        800.0f, 600.0f, 0.0f,  1.0f, 1.0f,
         
         0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-        200.0f, 200.0f, 0.0f,  1.0f, 1.0f,
-        0.0f, 200.0f, 0.0f,  0.0f, 1.0f
+        800.0f, 600.0f, 0.0f,  1.0f, 1.0f,
+        0.0f, 600.0f, 0.0f,  0.0f, 1.0f
     };
     
     GLuint VBO, VAO;
@@ -148,22 +151,21 @@ int main() {
     glEnableVertexAttribArray(1);
     
     glBindVertexArray(0);
-    GLuint texture = loadTexture("../assets/sprites/Vampirinho.png");  // Coloque o caminho da imagem aqui
     
     
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    // Vertices com posições e coordenadas de textura
+    
+    // Vertices com posições e coordenadas de textura do Personagem
     float vertices1[] = {
         // pos          // tex
         0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-        100.0f, 0.0f, 0.0f,  1.0f, 0.0f,
-        100.0f, 100.0f, 0.0f,  1.0f, 1.0f,
+        150.0f, 0.0f, 0.0f,  1.0f, 0.0f,
+        150.0f, 150.0f, 0.0f,  1.0f, 1.0f,
         
         0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
-        100.0f, 100.0f, 0.0f,  1.0f, 1.0f,
-        0.0f, 100.0f, 0.0f,  0.0f, 1.0f
+        150.0f, 150.0f, 0.0f,  1.0f, 1.0f,
+        0.0f, 150.0f, 0.0f,  0.0f, 1.0f
     };
     
     GLuint VBO1, VAO1;
@@ -183,46 +185,88 @@ int main() {
     glEnableVertexAttribArray(1);
     
     glBindVertexArray(0);
-    GLuint texture1 = loadTexture("../assets/sprites/microbio.png");  // Coloque o caminho da imagem aqui
-    
-    
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    glm::mat4 projection = glm::ortho(0.0f, (float)WIDTH, (float)HEIGHT, 0.0f, -1.0f, 1.0f);
 
+
+    // Carregar texturas
+    GLuint textureVampire = loadTexture("../assets/sprites/Vampirinho.png");  
+    GLuint texture1 = loadTexture("../assets/sprites/sky.png");  
+    GLuint texture2 = loadTexture("../assets/sprites/clouds_1.png");  
+    GLuint texture3 = loadTexture("../assets/sprites/rocks.png");  
+    GLuint texture4 = loadTexture("../assets/sprites/clouds_2.png");  
+    GLuint texture5 = loadTexture("../assets/sprites/ground.png");  
+    
+    
+    glm::mat4 projection = glm::ortho(0.0f, (float)WIDTH, (float)HEIGHT, 0.0f, -1.0f, 1.0f);
     
     while (!glfwWindowShouldClose(window)) {
-        glm::vec2 texOffset(0.0f, 0.0f);
         
         processInput(window, texOffset);
+        
+        
+        float posY = 0.10 * sin(5 * texOffset.x);
+        cout << texOffset.x << endl;
+        cout << "y: " << posY << endl;
 
         int texOffsetLoc = glGetUniformLocation(shaderProgram, "texOffset");
-        glUniform2f(texOffsetLoc, texOffset.x, texOffset.y);
-        
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
         
         glUseProgram(shaderProgram);
         
         // Matriz de modelo para mover a imagem
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(300.0f, 200.0f, 0.0f));
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-        glUniform2f(texOffsetLoc, texOffset.x, texOffset.y);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glUniform2f(texOffsetLoc, 0, 0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
         
-        glm::mat4 model1 = glm::translate(glm::mat4(1.0f), glm::vec3(100.0f, 200.0f, 0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        glUniform2f(texOffsetLoc, (texOffset.x * 0.05), texOffset.y);
+        glBindTexture(GL_TEXTURE_2D, texture2);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+        
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        glUniform2f(texOffsetLoc, (texOffset.x * 0.2), texOffset.y);
+        glBindTexture(GL_TEXTURE_2D, texture3);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+        
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        glUniform2f(texOffsetLoc, (texOffset.x * 0.3), texOffset.y);
+        glBindTexture(GL_TEXTURE_2D, texture4);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        glUniform2f(texOffsetLoc, (texOffset.x * 0.8), texOffset.y);
+        glBindTexture(GL_TEXTURE_2D, texture5);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
+
+
+        // Matriz de modelo para mover a imagem
+        glm::mat4 model1 = glm::translate(glm::mat4(1.0f), glm::vec3(350.0f, 450.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model1));
         glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-        glUniform2f(texOffsetLoc, texOffset.x, texOffset.y);
-        glBindTexture(GL_TEXTURE_2D, texture1);
+        glUniform2f(texOffsetLoc, 0, posY);
+        glBindTexture(GL_TEXTURE_2D, textureVampire);
         glBindVertexArray(VAO1);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();
