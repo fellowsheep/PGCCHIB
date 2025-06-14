@@ -58,6 +58,8 @@ set(EXERCISES
     Modulo2/Ex1Parte1M2
     Modulo2/Ex1Parte2M2
     Modulo3/M3JogoCores
+    Modulo5/M5AnimatedSprite
+
     TarefaVivencialModulo2
     TarefaVivencialModulo4
     TarefaModulo3
