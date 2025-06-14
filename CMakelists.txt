@@ -49,6 +49,7 @@ set(EXERCISES
     ExemplosMoodle/M2_material/exemplo_02
     ExemplosMoodle/M3_material/exemplo_03
     ExemplosMoodle/M4_material/exemplo_04
+    ExemplosMoodle/M6_material/exemplo/exemplo_07
     # ExemplosMoodle/M5_material/exemplo_05
     HelloTriangle
     HelloTransform
@@ -59,9 +60,9 @@ set(EXERCISES
     Modulo2/Ex1Parte2M2
     Modulo3/M3JogoCores
     Modulo5/M5AnimatedSprite
-
     TarefaVivencialModulo2
     TarefaVivencialModulo4
+    TarefaVivencialModulo6
     TarefaModulo3
 )
 
