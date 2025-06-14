@@ -1,6 +1,9 @@
-//#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+// STB_IMAGE
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 #include "gl_utils.h"
+
 #include <glad/glad.h> // Carregamento dos ponteiros para funções OpenGL
 #include <GLFW/glfw3.h>
 #include <assert.h>
@@ -10,19 +13,15 @@
 #include <math.h>
 #include <string.h>
 #include <time.h>
-#define GL_LOG_FILE "gl.log"
+//#define GL_LOG_FILE "gl.log"
 #include <iostream>
 #include <vector>
 #include "TileMap.h"
-#include "DiamondView.h"
+//#include "DiamondView.h"
 #include "SlideView.h"
 #include "ltMath.h"
 #include <fstream>
 
-
-/* Command line build:
-  g++ -framework Cocoa -framework OpenGL -framework IOKit -o demoIsom gl_utils.cpp maths_funcs.cpp stb_image.cpp _isometrico.cpp  -I include -I/sw/include -I/usr/local/include -I ../common/include ../common/osx_64/libGLEW.a ../common/osx_64/libglfw3.a
- */
 
 using namespace std;
 
@@ -40,13 +39,13 @@ float tileW, tileW2;
 float tileH, tileH2;
 int cx = -1, cy = -1;
 
-TilemapView *tview = new DiamondView();
-// TilemapView *tview = new SlideView();
+//TilemapView *tview = new DiamondView();
+TilemapView *tview = new SlideView();
 TileMap *tmap = NULL;
 
 GLFWwindow *g_window = NULL;
 
-TileMap * readMap (char *filename) {
+TileMap * readMap (const char *filename) {
     ifstream arq(filename);
     int w, h;
     arq >> w >> h;
@@ -64,7 +63,7 @@ TileMap * readMap (char *filename) {
     return tmap;
 }
 
-int loadTexture(unsigned int &texture, char *filename)
+int loadTexture(unsigned int &texture, const char *filename)
 {
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);

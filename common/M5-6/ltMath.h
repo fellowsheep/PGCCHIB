@@ -48,7 +48,8 @@ float * cross (float *a, float *b) {
     float x = a[1] * b[2] - a[2] * b[1];
     float y = a[2] * b[0] - a[0] * b[2];
     float z = a[0] * b[1] - a[1] * b[0];
-    float v[] = {x, y, z};
+    float *v = new float[3];
+    v[0] = x; v[1] = y; v[2] = z;
     return v;
 }
 

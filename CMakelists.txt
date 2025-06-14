@@ -50,6 +50,7 @@ set(EXERCISES
     ExemplosMoodle/M3_material/exemplo_03
     ExemplosMoodle/M4_material/exemplo_04
     # ExemplosMoodle/M5_material/exemplo_05
+    #ExemplosMoodle/M6_material/exemplo_07
     HelloTriangle
     HelloTransform
     HelloTexture
@@ -75,6 +76,8 @@ endif()
 
 # Caminho esperado para a GLAD
 set(GLAD_C_FILE "${CMAKE_SOURCE_DIR}/common/glad.c")
+# Caminho esperado para a gl_utils
+set(GL_UTILS_C_FILE "${CMAKE_SOURCE_DIR}/common/gl_utils.cpp")
 
 # Verifica se os arquivos da GLAD estão no lugar
 if (NOT EXISTS ${GLAD_C_FILE})
@@ -87,7 +90,7 @@ foreach(EXERCISE ${EXERCISES})
     get_filename_component(EXE_NAME ${EXERCISE} NAME)                                                                                                                                       
     
     # Adiciona o executável usando o nome do arquivo como nome do executável
-    add_executable(${EXE_NAME} src/${EXERCISE}.cpp ${GLAD_C_FILE})
+    add_executable(${EXE_NAME} src/${EXERCISE}.cpp ${GLAD_C_FILE}) 
 
     # Configura as bibliotecas e include dirs para o executável
     target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include/glad ${glm_SOURCE_DIR} ${stb_image_SOURCE_DIR})
