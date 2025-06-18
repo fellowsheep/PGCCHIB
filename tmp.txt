@@ -1,0 +1,17 @@
+# Para o projeto do exemplo_07.cpp (em ExemplosMoodle/M6_Material)
+add_executable(TileMapViewer
+    src/ExemplosMoodle/M6_Material/exemplo_07.cpp
+    src/ExemplosMoodle/M6_Material/TileMap.cpp
+    src/ExemplosMoodle/M6_Material/SlideView.cpp
+    src/ExemplosMoodle/M6_Material/ltMath.cpp
+    src/ExemplosMoodle/M6_Material/gl_utils.cpp
+    ${GLAD_C_FILE}
+)
+
+target_include_directories(TileMapViewer PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include/glad
+    ${CMAKE_SOURCE_DIR}/src/ExemplosMoodle/M6_Material
+    ${glm_SOURCE_DIR}
+    ${stb_image_SOURCE_DIR}
+)

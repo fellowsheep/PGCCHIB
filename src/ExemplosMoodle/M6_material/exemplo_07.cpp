@@ -1,11 +1,3 @@
-// STB_IMAGE
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
-#include "gl_utils.h"
-
-#include <glad/glad.h> // Carregamento dos ponteiros para funções OpenGL
-#include <GLFW/glfw3.h>
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,11 +8,21 @@
 //#define GL_LOG_FILE "gl.log"
 #include <iostream>
 #include <vector>
+#include <fstream>
+
+
+#include <glad/glad.h> // Carregamento dos ponteiros para funções OpenGL
+
+// STB_IMAGE
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
+#include "gl_utils.h"
 #include "TileMap.h"
 //#include "DiamondView.h"
 #include "SlideView.h"
 #include "ltMath.h"
-#include <fstream>
+
 
 
 using namespace std;

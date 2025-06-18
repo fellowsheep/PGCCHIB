@@ -49,13 +49,12 @@ set(EXERCISES
     ExemplosMoodle/M2_material/exemplo_02
     ExemplosMoodle/M3_material/exemplo_03
     ExemplosMoodle/M4_material/exemplo_04
-    # ExemplosMoodle/M5_material/exemplo_05
-    #ExemplosMoodle/M6_material/exemplo_07
     HelloTriangle
     HelloTransform
     HelloTexture
     HelloSprite
     HelloAnimatedSprite
+    HelloIsometricTilemap
     Modulo2/Ex1Parte1M2
     Modulo2/Ex1Parte2M2
     Modulo3/M3JogoCores
@@ -76,8 +75,6 @@ endif()
 
 # Caminho esperado para a GLAD
 set(GLAD_C_FILE "${CMAKE_SOURCE_DIR}/common/glad.c")
-# Caminho esperado para a gl_utils
-set(GL_UTILS_C_FILE "${CMAKE_SOURCE_DIR}/common/gl_utils.cpp")
 
 # Verifica se os arquivos da GLAD estão no lugar
 if (NOT EXISTS ${GLAD_C_FILE})
@@ -96,3 +93,4 @@ foreach(EXERCISE ${EXERCISES})
     target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include/glad ${glm_SOURCE_DIR} ${stb_image_SOURCE_DIR})
     target_link_libraries(${EXE_NAME} glfw ${OPENGL_LIBS} glm::glm)
 endforeach()
+
