@@ -56,6 +56,7 @@ set(EXERCISES
     HelloTexture
     HelloSprite
     HelloAnimatedSprite
+    HelloIsometricTilemap
     Modulo2/Ex1Parte1M2
     Modulo2/Ex1Parte2M2
     Modulo3/M3JogoCores
@@ -93,9 +94,10 @@ foreach(EXERCISE ${EXERCISES})
     get_filename_component(EXE_NAME ${EXERCISE} NAME)                                                                                                                                       
     
     # Adiciona o executável usando o nome do arquivo como nome do executável
-    add_executable(${EXE_NAME} src/${EXERCISE}.cpp ${GLAD_C_FILE})
+    add_executable(${EXE_NAME} src/${EXERCISE}.cpp ${GLAD_C_FILE}) 
 
     # Configura as bibliotecas e include dirs para o executável
     target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include/glad ${glm_SOURCE_DIR} ${stb_image_SOURCE_DIR})
     target_link_libraries(${EXE_NAME} glfw ${OPENGL_LIBS} glm::glm)
 endforeach()
+
