@@ -1,27 +1,4 @@
-/*
- * Hello Triangle - Código adaptado de:
- *   - https://learnopengl.com/#!Getting-started/Hello-Triangle
- *   - https://antongerdelan.net/opengl/glcontext2.html
- *
- * Adaptado por: Rossana Baptista Queiroz
- *
- * Disciplinas:
- *   - Processamento Gráfico (Ciência da Computação - Híbrido)
- *   - Processamento Gráfico: Fundamentos (Ciência da Computação - Presencial)
- *   - Fundamentos de Computação Gráfica (Jogos Digitais)
- *
- * Descrição:
- *   Este código é o "Olá Mundo" da Computação Gráfica, utilizando OpenGL Moderna.
- *   No pipeline programável, o desenvolvedor pode implementar as etapas de
- *   Processamento de Geometria e Processamento de Pixel utilizando shaders.
- *   Um programa de shader precisa ter, obrigatoriamente, um Vertex Shader e um Fragment Shader,
- *   enquanto outros shaders, como o de geometria, são opcionais.
- *
- * Histórico:
- *   - Versão inicial: 07/04/2017
- *   - Última atualização: 18/03/2025
- *
- */
+
 
 #include <iostream>
 #include <string>

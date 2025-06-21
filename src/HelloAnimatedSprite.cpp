@@ -1,27 +1,3 @@
-/*
- * Hello Triangle - Código adaptado de:
- *   - https://learnopengl.com/#!Getting-started/Hello-Triangle
- *   - https://antongerdelan.net/opengl/glcontext2.html
- *
- * Adaptado por: Rossana Baptista Queiroz
- *
- * Disciplinas:
- *   - Processamento Gráfico (Ciência da Computação - Híbrido)
- *   - Processamento Gráfico: Fundamentos (Ciência da Computação - Presencial)
- *   - Fundamentos de Computação Gráfica (Jogos Digitais)
- *
- * Descrição:
- *   Este código é o "Olá Mundo" da Computação Gráfica, utilizando OpenGL Moderna.
- *   No pipeline programável, o desenvolvedor pode implementar as etapas de
- *   Processamento de Geometria e Processamento de Pixel utilizando shaders.
- *   Um programa de shader precisa ter, obrigatoriamente, um Vertex Shader e um Fragment Shader,
- *   enquanto outros shaders, como o de geometria, são opcionais.
- *
- * Histórico:
- *   - Versão inicial: 07/04/2017
- *   - Última atualização: 18/03/2025
- *
- */
 
 #include <iostream>
 #include <string>
@@ -99,6 +75,8 @@ const GLchar *fragmentShaderSource = R"(
 	 color = texture(tex_buff,tex_coord + offsetTex);
  }
  )";
+// Variável vampirao
+ Sprite vampirao;
 
 // Função MAIN
 int main()
@@ -162,14 +140,13 @@ int main()
 	GLuint texID = loadTexture("../assets/sprites/Vampires1_Walk_full.png",imgWidth,imgHeight);
 
 	// Gerando um buffer simples, com a geometria de um triângulo
-	Sprite vampirao;
 	vampirao.nAnimations = 4;
 	vampirao.nFrames = 6;
 	vampirao.VAO = setupSprite(vampirao.nAnimations,vampirao.nFrames,vampirao.ds,vampirao.dt);
 	vampirao.position = vec3(400.0, 150.0, 0.0);
 	vampirao.dimensions = vec3(imgWidth/vampirao.nFrames*4,imgHeight/vampirao.nAnimations*4,1.0);
 	vampirao.texID = texID;
-	vampirao.iAnimation = 1;
+	vampirao.iAnimation = 4;
 	vampirao.iFrame = 0;
 
 	Sprite background;
@@ -232,7 +209,7 @@ int main()
 
 				// Cria uma string e define o FPS como título da janela.
 				char tmp[256];
-				sprintf(tmp, "Ola Triangulo! -- Rossana\tFPS %.2lf", fps);
+				sprintf(tmp, "Ola Triangulo! -- Áron\tFPS %.2lf", fps);
 				glfwSetWindowTitle(window, tmp);
 
 				title_countdown_s = 0.1; // Reinicia o temporizador para atualizar o título periodicamente.
@@ -296,7 +273,7 @@ int main()
 		}
 
 		offsetTex.s = vampirao.iFrame * vampirao.ds;
-		offsetTex.t = 0.0;
+		offsetTex.t = vampirao.iAnimation * vampirao.dt;
 		glUniform2f(glGetUniformLocation(shaderID, "offsetTex"),offsetTex.s, offsetTex.t);
 
 		glBindVertexArray(vampirao.VAO); // Conectando ao buffer de geometria
@@ -316,13 +293,27 @@ int main()
 	return 0;
 }
 
-// Função de callback de teclado - só pode ter uma instância (deve ser estática se
-// estiver dentro de uma classe) - É chamada sempre que uma tecla for pressionada
-// ou solta via GLFW
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode)
-{
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode){
+	if (key == GLFW_KEY_S && action == GLFW_PRESS || key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+		vampirao.iAnimation = 1;
+		cout << "Andando para baixo" << endl;
+	}
+	if (key == GLFW_KEY_W && action == GLFW_PRESS || key == GLFW_KEY_UP && action == GLFW_PRESS) {
+		vampirao.iAnimation = 2;
+		cout << "Andando para cima" << endl;
+	}
+	if (key == GLFW_KEY_A && action == GLFW_PRESS || key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+		vampirao.iAnimation = 3;
+		cout << "Andando para a esquerda" << endl;
+	}
+	if (key == GLFW_KEY_D && action == GLFW_PRESS || key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+		vampirao.iAnimation = 4;
+		cout << "Andando para a direita" << endl;
+	}
+	{
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
+	glfwSetWindowShouldClose(window, GL_TRUE);
+	}
 }
 
 // Esta função está bastante hardcoded - objetivo é compilar e "buildar" um programa de
