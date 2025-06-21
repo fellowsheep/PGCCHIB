@@ -49,7 +49,7 @@ set(EXERCISES
     ExemplosMoodle/M2_material/exemplo_02
     ExemplosMoodle/M3_material/exemplo_03
     ExemplosMoodle/M4_material/exemplo_04
-    ExemplosMoodle/M6_material/exemplo/exemplo_07
+    ExemplosMoodle/M6_material/exemplo_07
     # ExemplosMoodle/M5_material/exemplo_05
     HelloTriangle
     HelloTransform
@@ -63,7 +63,7 @@ set(EXERCISES
     Modulo5/M5AnimatedSprite
     TarefaVivencialModulo2
     TarefaVivencialModulo4
-    TarefaVivencialModulo6
+    VivencialModulo6/TarefaVivencialModulo6
     TarefaModulo3
 )
 
@@ -91,10 +91,22 @@ endif()
 # Cria os executáveis
 foreach(EXERCISE ${EXERCISES})
     # Extrai o nome do arquivo sem o diretório para o executável
-    get_filename_component(EXE_NAME ${EXERCISE} NAME)                                                                                                                                       
-    
+    get_filename_component(EXE_NAME ${EXERCISE} NAME)    
+    if(EXE_NAME STREQUAL "exemplo_07" OR EXE_NAME STREQUAL "TarefaVivencialModulo6")
+        add_executable(${EXE_NAME}
+            src/${EXERCISE}.cpp
+            ${GLAD_C_FILE}
+            src/ExemplosMoodle/M6_material/gl_utils.cpp
+            src/ExemplosMoodle/M6_material/ltMath.cpp
+            src/ExemplosMoodle/M6_material/maths_funcs.cpp
+            src/ExemplosMoodle/M6_material/SlideView.cpp
+            src/ExemplosMoodle/M6_material/TileMap.cpp
+            src/ExemplosMoodle/M6_material/TileMapView.cpp
+        )
+    else()
     # Adiciona o executável usando o nome do arquivo como nome do executável
-    add_executable(${EXE_NAME} src/${EXERCISE}.cpp ${GLAD_C_FILE}) 
+        add_executable(${EXE_NAME} src/${EXERCISE}.cpp ${GLAD_C_FILE})
+    endif()                                                                                                                                   
 
     # Configura as bibliotecas e include dirs para o executável
     target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include/glad ${glm_SOURCE_DIR} ${stb_image_SOURCE_DIR})

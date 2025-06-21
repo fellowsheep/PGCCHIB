@@ -40,10 +40,11 @@ float yf = 1.0f;
 float w = xf - xi;
 float h = yf - yi;
 float tw, th, tw2, th2;
-int tileSetCols = 9, tileSetRows = 9;
+int tileSetCols = 7, tileSetRows = 1;
 float tileW, tileW2;
 float tileH, tileH2;
 int cx = -1, cy = -1;
+int posX = 0, posY = 0;
 
 //TilemapView *tview = new DiamondView();
 TilemapView *tview = new DiamondView();
@@ -57,26 +58,21 @@ TileMap * readMap (const char *filename) {
         cout << "Erro ao abrir o arquivo: " << filename << endl;
         exit(1);
     }
-	cout << ">>> 1" << endl;
     int w, h;
     arq >> w >> h;
 	cout << w << endl;
 	cout << h << endl;
     TileMap *tmap = new TileMap(w, h, 0);
-	cout << ">>> 2" << endl;
     for(int r = 0; r < h; r++) {
 		for(int c = 0; c < w; c++) {
 			int tid;
             arq >> tid;
             cout << tid << " ";
             tmap->setTile(c, h-r-1, tid);
-			cout << ">>> 3" << endl;
         }
         cout << endl;
     }
-	cout << ">>> 4" << endl;
 	arq.close();
-	cout << ">>> 5" << endl;
     return tmap;
 }
 
@@ -202,6 +198,54 @@ void mouse(double &mx, double &my) {
     cx = c; cy = r;
 }
 
+void processKeyboard() {
+    bool moved = false;
+	int c = posX;
+	int r = posY;
+
+    if (glfwGetKey(g_window, GLFW_KEY_W) == GLFW_PRESS) {
+        tview->computeTileWalking(c, r, DIRECTION_NORTH);
+        moved = true;
+    }
+    if (glfwGetKey(g_window, GLFW_KEY_S) == GLFW_PRESS) {
+        tview->computeTileWalking(c, r, DIRECTION_SOUTH);
+        moved = true;
+    }
+    if (glfwGetKey(g_window, GLFW_KEY_A) == GLFW_PRESS) {
+        tview->computeTileWalking(c, r, DIRECTION_WEST);
+        moved = true;
+    }
+    if (glfwGetKey(g_window, GLFW_KEY_D) == GLFW_PRESS) {
+        tview->computeTileWalking(c, r, DIRECTION_EAST);
+        moved = true;
+    }
+    if (glfwGetKey(g_window, GLFW_KEY_Q) == GLFW_PRESS) {
+        tview->computeTileWalking(c, r, DIRECTION_NORTHWEST);
+        moved = true;
+    }
+    if (glfwGetKey(g_window, GLFW_KEY_E) == GLFW_PRESS) {
+        tview->computeTileWalking(c, r, DIRECTION_NORTHEAST);
+        moved = true;
+    }
+    if (glfwGetKey(g_window, GLFW_KEY_Z) == GLFW_PRESS) {
+        tview->computeTileWalking(c, r, DIRECTION_SOUTHWEST);
+        moved = true;
+    }
+    if (glfwGetKey(g_window, GLFW_KEY_C) == GLFW_PRESS) {
+        tview->computeTileWalking(c, r, DIRECTION_SOUTHEAST);
+        moved = true;
+    }
+	
+	if (moved) {
+		cout << "posX=" << c << " posY=" << r << endl;
+		// Atualiza a posição do tile selecionado
+		if (c < 0 || c >= tmap->getWidth() || r < 0 || r >= tmap->getHeight()) {
+			return; // Posição inválida
+		}
+		posX = c;
+		posY = r;
+	}
+}
 int main()
 {
 	cout << "Iniciando log..." << endl;
@@ -214,9 +258,10 @@ int main()
 	glDepthFunc(GL_LESS);
 
     cout << "Tentando criar tmap..." << endl;
-    tmap = readMap("C:/projeto_java/PGCCHIB/src/ExemplosMoodle/M6_material/terrain1.tmap");
-    cout << "Tmap lido..." << endl;
-    tw = w / (float)tmap->getWidth();
+    tmap = readMap("C:/projeto_java/PGCCHIB/src/VivencialModulo6/terrain1.tmap");
+    posX = tmap->getWidth() / 2;
+	posY = tmap->getHeight() / 2;
+	tw = w / (float)tmap->getWidth();
     th = tw / 2.0f;
     tw2 = th;
     th2 = th / 2.0f;
@@ -231,16 +276,13 @@ int main()
     << endl;
 
 	GLuint tid;
-	cout << "ENTROU" << endl;
 	
-	if (!loadTexture(tid, "C:/projeto_java/PGCCHIB/src/ExemplosMoodle/M6_material/terrain.png")) {
+	if (!loadTexture(tid, "C:/projeto_java/PGCCHIB/assets/tilesets/tilesetIso.png")) {
 		cout << "Erro ao carregar textura!" << endl;
 		return 1;
 	}
-	cout << "SAIU" << endl;
 
     tmap->setTid(tid);
-    cout << "Tmap inicializado" << endl;
 
 	// LOAD TEXTURES
 
@@ -280,8 +322,8 @@ int main()
 
     char vertex_shader[1024 * 256];
 	char fragment_shader[1024 * 256];
-	parse_file_into_str("C:/projeto_java/PGCCHIB/src/ExemplosMoodle/M6_material/_geral_vs.glsl", vertex_shader, 1024 * 256);
-	parse_file_into_str("C:/projeto_java/PGCCHIB/src/ExemplosMoodle/M6_material/_geral_fs.glsl", fragment_shader, 1024 * 256);
+	parse_file_into_str("C:/projeto_java/PGCCHIB/src/VivencialModulo6/_geral_vs.glsl", vertex_shader, 1024 * 256);
+	parse_file_into_str("C:/projeto_java/PGCCHIB/src/VivencialModulo6/_geral_fs.glsl", fragment_shader, 1024 * 256);
 
 	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
 	const GLchar *p = (const GLchar *)vertex_shader;
@@ -345,6 +387,7 @@ int main()
 		_update_fps_counter(g_window);
 		double current_seconds = glfwGetTime();
 
+		processKeyboard();
 		// wipe the drawing surface clear
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -359,7 +402,12 @@ int main()
         int r = 0, c = 0;
         for(int r = 0; r < tmap->getHeight(); r++) {
             for(int c = 0; c < tmap->getWidth(); c++) {
-                int t_id = (int) tmap->getTile(c, r);
+				int t_id;
+				if (posX == c && posY == r) {
+					t_id = 6;
+				} else {
+                	t_id = (int) tmap->getTile(c, r);
+				}
                 int u = t_id % tileSetCols;
                 int v = t_id / tileSetCols;
                                 
@@ -373,8 +421,7 @@ int main()
                 glUniform1f(glGetUniformLocation(shader_programme, "weight"), (c == cx) && (r == cy) ? 0.5 : 0.0);                
                 
                 // bind Texture
-                // glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, tmap->getTileSet());
+				glBindTexture(GL_TEXTURE_2D, tmap->getTileSet());
                 glUniform1i(glGetUniformLocation(shader_programme, "sprite"), 0);
                 glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             }
@@ -385,12 +432,6 @@ int main()
 		if (GLFW_PRESS == glfwGetKey(g_window, GLFW_KEY_ESCAPE))
 		{
 			glfwSetWindowShouldClose(g_window, 1);
-		}
-		if (GLFW_PRESS == glfwGetKey(g_window, GLFW_KEY_UP))
-		{
-		}
-		if (GLFW_PRESS == glfwGetKey(g_window, GLFW_KEY_DOWN))
-		{
 		}
         double mx, my;
         glfwGetCursorPos(g_window, &mx, &my);

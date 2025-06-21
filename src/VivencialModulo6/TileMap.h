@@ -9,20 +9,14 @@ class TileMap {
     
 public:
     TileMap(int w, int h, unsigned char initWith) {
-	    cout << ">>> A1" << endl;
 	    cout << w << endl;
 	    cout << h << endl;
 
         this->map = new unsigned char [w * h];
-	    cout << ">>> A2" << endl;
         this->width = w;
-	    cout << ">>> A3" << endl;
         this->height = h;
-	    cout << ">>> A4" << endl;
         this->z = 0.0f;
-	    cout << ">>> A5" << endl;
         this->tid = 0;
-	    cout << ">>> A6" << endl;
     }
     
 //    TileMap(const TileMap &tm) {
