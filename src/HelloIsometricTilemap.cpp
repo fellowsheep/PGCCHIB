@@ -67,6 +67,7 @@ struct Tile
 	vec3 position;
 	vec3 dimensions; //tamanho do losango 2:1
 	float ds, dt;
+	bool caminhavel;
 	//int iAnimation, iFrame;
 	//int nAnimations, nFrames;
 };	
@@ -80,6 +81,7 @@ int setupSprite(int nAnimations, int nFrames, float &ds, float &dt);
 int setupTile(int nTiles, float &ds, float &dt);
 int loadTexture(string filePath, int &width, int &height);
 void desenharMapa(GLuint shaderID);
+void desenharPersonagem(GLuint shaderID);
 
 // Dimensões da janela (pode ser alterado em tempo de execução)
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -124,6 +126,7 @@ int map[3][3] = {
 
 vector <Tile> tileset;
 
+vec2 pos; //armazena o indice i e j de onde o "personagem" está na cena
 // Função MAIN
 int main()
 {
@@ -204,8 +207,15 @@ int main()
 		tile.iTile = i;
 		tile.texID = texID;
 		tile.VAO = setupTile(7,tile.ds,tile.dt);
+		tile.caminhavel = true;
 		tileset.push_back(tile);
 	}
+
+	tileset[4].caminhavel = false; //agua
+
+	// Inicializar a posição do "personagem"
+	pos.x = 0;
+	pos.y = 0;
 
 
 
@@ -274,6 +284,7 @@ int main()
 
 		// Desenhar o mapa
 		desenharMapa(shaderID);
+		desenharPersonagem(shaderID);
 
 		//---------------------------------------------------------------------
 		// Desenho do vampirao
@@ -320,6 +331,102 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
+
+	vec2 aux = pos;
+
+	if (key == GLFW_KEY_W && action == GLFW_PRESS) // NORTE
+	{
+		if (pos.x > 0)
+		{
+			pos.x--;
+		}
+
+		if (pos.y > 0)
+		{
+			pos.y--;
+		}
+
+
+	}
+	if (key == GLFW_KEY_A && action == GLFW_PRESS) // OESTE
+	{
+		if (pos.x > 0)
+		{
+			pos.x--;
+		}
+		if (pos.y <= TILEMAP_HEIGHT - 2)
+		{
+			pos.y++;
+		}
+
+
+	}
+	if (key == GLFW_KEY_S && action == GLFW_PRESS) // SUL
+	{
+		if (pos.x <= TILEMAP_WIDTH -2)
+		{
+			pos.x++;
+		}
+
+		if (pos.y <= TILEMAP_HEIGHT - 2)
+		{
+			pos.y++;
+		}
+
+	}
+	if (key == GLFW_KEY_D && action == GLFW_PRESS) // LESTE
+	{
+		if (pos.x <= TILEMAP_WIDTH -2)
+		{
+			pos.x++;
+		}
+
+		if (pos.y > 0)
+		{
+			pos.y--;
+		}
+
+	}
+	if (key == GLFW_KEY_Q && action == GLFW_PRESS) //NOROESTE
+	{
+		if (pos.x > 0)
+		{
+			pos.x--;
+		}
+
+	}
+	if (key == GLFW_KEY_E && action == GLFW_PRESS) //NORDESTE
+	{
+		if (pos.y > 0)
+		{
+			pos.y--;
+		}
+
+	}
+	if (key == GLFW_KEY_Z && action == GLFW_PRESS) //SUDOESTE
+	{
+		if (pos.y <= TILEMAP_HEIGHT - 2)
+		{
+			pos.y++;
+		}
+
+	}
+	if (key == GLFW_KEY_X && action == GLFW_PRESS) //SUDESTE
+	{
+		if (pos.x <= TILEMAP_WIDTH -2)
+		{
+			pos.x++;
+		}
+
+	}
+
+	if (!tileset[map[(int)pos.y][(int)pos.x]].caminhavel)
+	{
+		pos = aux; //recebe a pos não mudada :P
+	}
+
+	cout << "(" << pos.x <<"," << pos.y << ")" << endl;
+
 }
 
 // Esta função está bastante hardcoded - objetivo é compilar e "buildar" um programa de
@@ -569,4 +676,33 @@ void desenharMapa(GLuint shaderID)
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
 		}
 	}
+}
+
+void desenharPersonagem(GLuint shaderID)
+{
+	Tile curr_tile = tileset[6]; //tile rosa
+
+	float x0 = 400;
+	float y0 = 100;
+
+	float x = x0 + (pos.x-pos.y) * curr_tile.dimensions.x/2.0;
+	float y = y0 + (pos.x+pos.y) * curr_tile.dimensions.y/2.0;
+
+	mat4 model = mat4(1);
+	model = translate(model, vec3(x,y,0.0));
+	model = scale(model,curr_tile.dimensions);
+	glUniformMatrix4fv(glGetUniformLocation(shaderID, "model"), 1, GL_FALSE, value_ptr(model));
+
+	vec2 offsetTex;
+
+	offsetTex.s = curr_tile.iTile * curr_tile.ds;
+	offsetTex.t = 0.0;
+	glUniform2f(glGetUniformLocation(shaderID, "offsetTex"),offsetTex.s, offsetTex.t);
+
+	glBindVertexArray(curr_tile.VAO); // Conectando ao buffer de geometria
+	glBindTexture(GL_TEXTURE_2D, curr_tile.texID); // Conectando ao buffer de textura
+
+	// Chamada de desenho - drawcall
+	// Poligono Preenchido - GL_TRIANGLES
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
